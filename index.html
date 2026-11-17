@@ -1816,6 +1816,18 @@
             document.getElementById('aff-link').href = selectedAppliance.affUrl;
 
             selectEnergyClass(selectedEnergyClass);
+
+                // Auto-scroll na telefonie do rozwiniętej tabeli klas energetycznych
+                if (window.matchMedia('(max-width: 639px)').matches) {
+                    requestAnimationFrame(() => {
+                        const header = document.querySelector('header');
+                        const offset = getComputedStyle(header).position === 'sticky'
+                            ? header.offsetHeight + 10
+                            : 12;
+                        const targetTop = panel.getBoundingClientRect().top + window.scrollY - offset;
+                        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+                    });
+                }
         }
 
         function updateEnergyClassListOnly() {
