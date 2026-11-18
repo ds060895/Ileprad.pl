@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polityka prywatności — ileprad.pl</title>
+    <meta name="description" content="Polityka prywatności serwisu ileprad.pl — informacje o przetwarzaniu danych, braku rejestracji, logach i analityce Vercel oraz linkach zewnętrznych.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='36' fill='%23ffffff'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-soft: #eff6ff;
+            --border: #e5e7eb;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 0 16px;
+            width: 100%;
+        }
+
+        /* Nagłówek identyczny ze stroną główną */
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+            animation: lightningStrike 5s infinite;
+        }
+
+        .brand-icon .bolt-glyph {
+            display: inline-block;
+            animation: boltFlicker 5s infinite;
+        }
+
+        @keyframes lightningStrike {
+            0%, 84%, 100% {
+                background-color: var(--primary);
+                box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+                transform: scale(1);
+            }
+            86% {
+                background-color: #60a5fa;
+                box-shadow: 0 0 18px rgba(250, 204, 21, 0.95), 0 0 28px rgba(59, 130, 246, 0.85);
+                transform: scale(1.08);
+            }
+            88% {
+                background-color: var(--primary);
+                box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+                transform: scale(1);
+            }
+            90% {
+                background-color: #93c5fd;
+                box-shadow: 0 0 24px rgba(253, 224, 71, 1), 0 0 34px rgba(37, 99, 235, 0.9);
+                transform: scale(1.1);
+            }
+            94% {
+                background-color: var(--primary);
+                box-shadow: 0 2px 8px rgba(37, 99, 235, 0.45);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes boltFlicker {
+            0%, 84%, 100% {
+                filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+                opacity: 1;
+            }
+            86%, 90% {
+                filter: drop-shadow(0 0 6px #fef08a) brightness(1.35);
+                opacity: 1;
+            }
+            88% {
+                opacity: 0.4;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .brand-icon,
+            .brand-icon .bolt-glyph {
+                animation: none;
+            }
+        }
+
+        .brand-text h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .brand-text h1 span {
+            color: var(--primary);
+        }
+
+        .brand-text p {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 2px;
+        }
+
+        .cross-link {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            padding: 7px 13px;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cross-link strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .cross-link:hover {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        /* Główna treść */
+        main {
+            flex: 1;
+            padding: 24px 0 48px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (min-width: 640px) {
+            .card {
+                padding: 32px;
+            }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .policy-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .policy-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .policy-meta {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .policy-section {
+            margin-bottom: 22px;
+        }
+
+        .policy-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .policy-section h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .policy-section p {
+            font-size: 0.92rem;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .policy-section ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+            color: #374151;
+        }
+
+        .policy-section li {
+            margin-bottom: 5px;
+        }
+
+        .policy-section a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .policy-section a:hover {
+            text-decoration: underline;
+        }
+
+        .info-highlight {
+            background: var(--primary-soft);
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: #1e3a8a;
+            margin-bottom: 22px;
+        }
+
+        /* Stopka */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 20px 0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="brand">
+                <div class="brand-icon" aria-hidden="true"><span class="bolt-glyph">⚡</span></div>
+                <div class="brand-text">
+                    <h1>ile<span>prad</span>.pl</h1>
+                    <p>Kalkulator zużycia i kosztów energii</p>
+                </div>
+            </a>
+            <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer" class="cross-link">
+                Wylicz moc instalacji PV, przyłącza czy urządzenia grzewczego <strong>na ilekw.pl →</strong>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="card">
+            <a href="index.html" class="back-link">← Wróć do kalkulatora ileprad.pl</a>
+
+            <div class="policy-header">
+                <h2>Polityka prywatności serwisu ileprad.pl</h2>
+                <p class="policy-meta">Ostatnia aktualizacja: listopad 2026 r.</p>
+            </div>
+
+            <div class="info-highlight">
+                <strong>Najważniejsze w skrócie:</strong> Kalkulator <strong>ileprad.pl</strong> jest statycznym narzędziem internetowym. Nie wymaga logowania ani rejestracji, nie tworzy profili użytkowników, a wszystkie wpisywane parametry (moc, czas pracy, cena prądu, pojemność baterii EV, zużycie kWh) są obliczane <strong>wyłącznie lokalnie w Twojej przeglądarce</strong> i nie są nigdzie wysyłane ani zapisywane. Serwis zbiera jedynie anonimowe, zagregowane statystyki odwiedzin bez użycia plików cookies (Vercel Web Analytics).
+            </div>
+
+            <section class="policy-section">
+                <h3>1. Administrator i kontakt</h3>
+                <p>Administratorem serwisu internetowego dostępnego pod adresem <strong>ileprad.pl</strong> jest właściciel serwisu. W sprawach związanych z działaniem strony oraz ochroną danych osobowych możesz skontaktować się bezpośrednio drogą elektroniczną pod adresem: <a href="mailto:kontakt@ileprad.pl">kontakt@ileprad.pl</a>.</p>
+            </section>
+
+            <section class="policy-section">
+                <h3>2. Brak rejestracji i lokalne przetwarzanie danych w kalkulatorze</h3>
+                <p>Korzystanie z serwisu ileprad.pl jest w pełni bezpłatne i anonimowe:</p>
+                <ul>
+                    <li>Serwis nie posiada systemu kont użytkowników, formularzy rejestracji ani logowania.</li>
+                    <li>Wszystkie obliczenia wykonywane są bezpośrednio po stronie przeglądarki użytkownika (w języku JavaScript).</li>
+                    <li>Wartości wprowadzane do kalkulatorów nie są przesyłane na serwer administratora ani gromadzone w żadnych bazach danych.</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <h3>3. Hosting i techniczne logi serwera (Vercel)</h3>
+                <p>Strona utrzymywana jest na infrastrukturze hostingowej platformy <strong>Vercel</strong> (Vercel Inc.). Podczas wywołania strony serwer dostawcy hostingu może automatycznie rejestrować podstawowe dane techniczne (tzw. logi serwera), takie jak:</p>
+                <ul>
+                    <li>adres IP urządzenia łączącego się ze stroną,</li>
+                    <li>data i godzina zapytania,</li>
+                    <li>typ i wersja przeglądarki oraz systemu operacyjnego (nagłówek User-Agent),</li>
+                    <li>adres odwiedzonej podstrony oraz kod odpowiedzi HTTP.</li>
+                </ul>
+                <p>Dane te przetwarzane są wyłącznie w celach technicznych — zapewnienia bezpieczeństwa, ochrony przed nadużyciami, utrzymania ciągłości działania i diagnostyki błędów (podstawa prawna: art. 6 ust. 1 lit. f RODO — prawnie uzasadniony interes administratora). Dostawca hostingu może przetwarzać dane w ramach infrastruktury rozproszonej (w tym poza EOG) z zastosowaniem wymaganych prawem zabezpieczeń, takich jak standardowe klauzule umowne lub ramy ochrony danych UE–USA.</p>
+            </section>
+
+            <section class="policy-section">
+                <h3>4. Analityka ruchu (Vercel Web Analytics), pliki cookies i zasoby zewnętrzne</h3>
+                <p>Serwis ileprad.pl <strong>nie ustawia własnych plików cookies</strong> do celów reklamowych ani profilujących. Do pomiaru statystyk odwiedzin strona korzysta z narzędzia <strong>Vercel Web Analytics</strong> (Vercel Inc.), które działa <strong>bez użycia plików cookies</strong> oraz bez zapisywania identyfikatorów w pamięci przeglądarki użytkownika.</p>
+                <p>W ramach statystyk ruchu przetwarzane są wyłącznie zagregowane i zanonimizowane informacje, takie jak:</p>
+                <ul>
+                    <li>odwiedzane podstrony (adresy URL) oraz czas wizyty,</li>
+                    <li>źródło wejścia (nagłówek Referrer, o ile został przekazany przez przeglądarkę),</li>
+                    <li>przybliżona lokalizacja (kraj, region, miasto),</li>
+                    <li>typ urządzenia, system operacyjny oraz nazwa i wersja przeglądarki.</li>
+                </ul>
+                <p>Unikalni odwiedzający zliczani są na podstawie tymczasowego skrótu (hasha) generowanego po stronie serwera z przychodzącego zapytania i automatycznie usuwanego po <strong>24 godzinach</strong>. Rozwiązanie to uniemożliwia śledzenie użytkowników pomiędzy kolejnymi dniami ani pomiędzy różnymi witrynami internetowymi. Przetwarzanie odbywa się na podstawie prawnie uzasadnionego interesu administratora (art. 6 ust. 1 lit. f RODO), polegającego na analizie ruchu oraz rozwijaniu i ulepszaniu serwisu.</p>
+                <p>W celu poprawnego i spójnego wyświetlania typografii strona korzysta ponadto z czcionek z usługi <strong>Google Fonts</strong>, co wiąże się z technicznym pobraniem plików czcionek z serwerów Google przez przeglądarkę użytkownika.</p>
+            </section>
+
+            <section class="policy-section">
+                <h3>5. Linki zewnętrzne i afiliacyjne</h3>
+                <p>Na stronie znajdują się odnośniki do zewnętrznych sklepów oraz serwisów partnerskich, w szczególności do platformy <strong>Allegro</strong> (<a href="https://allegro.pl" target="_blank" rel="noopener noreferrer">allegro.pl</a>), sklepu <strong>Media Expert</strong> (<a href="https://www.mediaexpert.pl" target="_blank" rel="noopener noreferrer">mediaexpert.pl</a>) oraz powiązanego kalkulatora <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer">ilekw.pl</a>. Część linków może pełnić funkcję linków kierujących do kategorii produktowych lub linków afiliacyjnych.</p>
+                <p>Po kliknięciu takiego linku opuszczasz serwis ileprad.pl i przechodzisz na stronę zewnętrznego podmiotu, który stosuje własną politykę prywatności oraz własne zasady dotyczące plików cookies.</p>
+            </section>
+
+            <section class="policy-section">
+                <h3>6. Kontakt drogą e-mailową</h3>
+                <p>Jeśli wyślesz wiadomość na adres <a href="mailto:kontakt@ileprad.pl">kontakt@ileprad.pl</a>, Twój adres e-mail oraz treść korespondencji będą przetwarzane wyłącznie w celu udzielenia odpowiedzi i prowadzenia korespondencji (podstawa prawna: art. 6 ust. 1 lit. f RODO), przez czas niezbędny do załatwienia sprawy.</p>
+            </section>
+
+            <section class="policy-section">
+                <h3>7. Prawa użytkownika (RODO)</h3>
+                <p>W zakresie, w jakim przetwarzane są dane osobowe (np. podczas kontaktu e-mailowego), przysługuje Ci na zasadach określonych w RODO prawo do:</p>
+                <ul>
+                    <li>dostępu do swoich danych oraz otrzymania ich kopii,</li>
+                    <li>sprostowania (poprawienia) danych,</li>
+                    <li>usunięcia danych lub ograniczenia ich przetwarzania,</li>
+                    <li>wniesienia sprzeciwu wobec przetwarzania danych opartego na uzasadnionym interesie,</li>
+                    <li>wniesienia skargi do organu nadzorczego — Prezesa Urzędu Ochrony Danych Osobowych (PUODO).</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <h3>8. Zmiany polityki prywatności</h3>
+                <p>Administrator zastrzega sobie prawo do aktualizacji niniejszej Polityki prywatności w przypadku zmian w funkcjonalności serwisu (np. wdrożenia nowych funkcji lub narzędzi) albo zmian przepisów prawa. Aktualna wersja dokumentu zawsze znajduje się na tej podstronie.</p>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 <strong>ileprad.pl</strong> — Kalkulator kosztów energii elektrycznej | Wylicz moc instalacji PV, przyłącza czy urządzenia grzewczego: <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer">ilekw.pl</a></p>
+            <p style="margin-top: 6px;">
+                <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+                &nbsp;&bull;&nbsp;
+                Kontakt: <a href="mailto:kontakt@ileprad.pl">kontakt@ileprad.pl</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
