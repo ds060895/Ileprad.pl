@@ -244,12 +244,14 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
+            min-height: 510px;
         }
 
         @media (min-width: 640px) {
             .appliances-grid {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 12px;
+                min-height: 250px;
             }
         }
 
@@ -2233,13 +2235,12 @@
         }
 
         // Start aplikacji
-        window.onload = function() {
             renderApplianceTiles();
             calculateEV();
             calculateMain();
             calculateBill();
             switchTariff('G11', document.querySelector('.tariff-tab'));
-        };
+        
     </script>
      <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
