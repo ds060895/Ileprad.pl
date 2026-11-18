@@ -955,8 +955,8 @@
 
         .bill-compare-badges {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
         }
 
         .bill-box {
@@ -979,7 +979,7 @@
         }
 
         .bill-box-price {
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--text-main);
             margin: 2px 0;
@@ -1427,7 +1427,7 @@
             <div class="section-header">
                 <div>
                     <h2 class="section-title">🧾 Symulator całego rachunku za prąd (z opłatami stałymi 2026)</h2>
-                    <p class="section-subtitle">Porównaj pełny rachunek miesięczny w taryfie G11 vs G12 z uwzględnieniem opłaty mocowej i sieciowej stałej</p>
+                    <p class="section-subtitle">Porównaj pełny rachunek miesięczny w taryfie G11, G12 i G12w z uwzględnieniem opłaty mocowej i sieciowej stałej</p>
                 </div>
             </div>
 
@@ -1460,8 +1460,12 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label class="form-label" for="bill-night-share">Udział zużycia w strefie nocnej/weekendowej dla G12: <strong id="bill-night-val">40%</strong></label>
+                        <label class="form-label" for="bill-night-share">Udział zużycia w strefie nocnej dla G12: <strong id="bill-night-val">40%</strong></label>
                         <input type="range" id="bill-night-share" min="10" max="90" value="40" style="width: 100%;" oninput="calculateBill()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="bill-weekend-share">Udział zużycia w nocy i weekendy dla G12w: <strong id="bill-weekend-val">55%</strong></label>
+                        <input type="range" id="bill-weekend-share" min="10" max="90" value="55" style="width: 100%;" oninput="calculateBill()">
                     </div>
                 </div>
 
@@ -1476,6 +1480,11 @@
                             <div class="bill-box-label">Taryfa G12</div>
                             <div class="bill-box-price" id="bill-res-g12">210,51 zł</div>
                             <div class="bill-box-sub" id="bill-sub-g12">miesięcznie brutto</div>
+                        </div>
+                        <div class="bill-box" id="bill-box-g12w">
+                            <div class="bill-box-label">Taryfa G12w</div>
+                            <div class="bill-box-price" id="bill-res-g12w">219,00 zł</div>
+                            <div class="bill-box-sub" id="bill-sub-g12w">miesięcznie brutto</div>
                         </div>
                     </div>
 
@@ -1759,11 +1768,11 @@
 
         // Dane dla Symulatora Rachunku 2026 (brutto, wg taryf URE i E.ON Polska)
         const billProvidersData = {
-            pge: { name: 'PGE Obrót', g11: 1.10, g12Day: 1.25, g12Night: 0.61, g11Fixed1f: 6.76, g11Fixed3f: 12.28, g12Fixed1f: 10.46, g12Fixed3f: 17.71, handlowa: 0 },
-            tauron: { name: 'Tauron', g11: 0.97, g12Day: 1.08, g12Night: 0.64, g11Fixed1f: 9.08, g11Fixed3f: 13.36, g12Fixed1f: 9.08, g12Fixed3f: 13.36, handlowa: 0 },
-            enea: { name: 'Enea', g11: 0.98, g12Day: 1.11, g12Night: 0.59, g11Fixed1f: 9.16, g11Fixed3f: 12.80, g12Fixed1f: 11.80, g12Fixed3f: 17.91, handlowa: 0 },
-            energa: { name: 'Energa Obrót', g11: 1.10, g12Day: 1.24, g12Night: 0.62, g11Fixed1f: 9.63, g11Fixed3f: 14.48, g12Fixed1f: 17.65, g12Fixed3f: 24.81, handlowa: 0 },
-            eon: { name: 'E.ON Polska', g11: 0.96, g12Day: 1.03, g12Night: 0.65, g11Fixed1f: 14.10, g11Fixed3f: 22.79, g12Fixed1f: 14.10, g12Fixed3f: 22.79, handlowa: 16.27 }
+            pge: { name: 'PGE Obrót', g11: 1.10, g12Day: 1.25, g12Night: 0.61, g12wDay: 1.30, g12wNight: 0.68, g11Fixed1f: 6.76, g11Fixed3f: 12.28, g12Fixed1f: 10.46, g12Fixed3f: 17.71, g12wFixed1f: 11.25, g12wFixed3f: 18.43, handlowa: 0 },
+            tauron: { name: 'Tauron', g11: 0.97, g12Day: 1.08, g12Night: 0.64, g12wDay: 1.23, g12wNight: 0.63, g11Fixed1f: 9.08, g11Fixed3f: 13.36, g12Fixed1f: 9.08, g12Fixed3f: 13.36, g12wFixed1f: 9.08, g12wFixed3f: 13.36, handlowa: 0 },
+            enea: { name: 'Enea', g11: 0.98, g12Day: 1.11, g12Night: 0.59, g12wDay: 1.19, g12wNight: 0.59, g11Fixed1f: 9.16, g11Fixed3f: 12.80, g12Fixed1f: 11.80, g12Fixed3f: 17.91, g12wFixed1f: 20.73, g12wFixed3f: 32.26, handlowa: 0 },
+            energa: { name: 'Energa Obrót', g11: 1.10, g12Day: 1.24, g12Night: 0.62, g12wDay: 1.30, g12wNight: 0.65, g11Fixed1f: 9.63, g11Fixed3f: 14.48, g12Fixed1f: 17.65, g12Fixed3f: 24.81, g12wFixed1f: 17.65, g12wFixed3f: 24.81, handlowa: 0 },
+            eon: { name: 'E.ON Polska', g11: 0.96, g12Day: 1.03, g12Night: 0.65, g12wDay: 1.02, g12wNight: 0.73, g11Fixed1f: 14.10, g11Fixed3f: 22.79, g12Fixed1f: 14.10, g12Fixed3f: 22.79, g12wFixed1f: 14.10, g12wFixed3f: 22.79, handlowa: 16.27 }
         };
 
         let selectedAppliance = null;
@@ -2111,54 +2120,66 @@
             const rawKwh = parseFloat(document.getElementById('bill-kwh').value);
             const kwhMonth = Number.isFinite(rawKwh) && rawKwh >= 0 ? rawKwh : 0;
             const nightSharePct = parseInt(document.getElementById('bill-night-share').value, 10);
+            const weekendSharePct = parseInt(document.getElementById('bill-weekend-share').value, 10);
 
             document.getElementById('bill-night-val').textContent = nightSharePct + '%';
+            document.getElementById('bill-weekend-val').textContent = weekendSharePct + '%';
 
             const prov = billProvidersData[provKey];
             const kwhYear = kwhMonth * 12;
             const mocowa = getMocowa2026(kwhYear);
             const sieciowaG11 = phase === '1f' ? prov.g11Fixed1f : prov.g11Fixed3f;
             const sieciowaG12 = phase === '1f' ? prov.g12Fixed1f : prov.g12Fixed3f;
+            const sieciowaG12w = phase === '1f' ? prov.g12wFixed1f : prov.g12wFixed3f;
 
             document.getElementById('bill-year-info').textContent = `Rocznie: ${formatNumber(kwhYear, 0)} kWh (próg opłaty mocowej: ${mocowa.label})`;
 
             const g11Monthly = (kwhMonth * prov.g11) + mocowa.fee + sieciowaG11 + prov.handlowa;
+
             const nightShare = nightSharePct / 100;
             const g12WeightedRate = ((1 - nightShare) * prov.g12Day) + (nightShare * prov.g12Night);
             const g12Monthly = (kwhMonth * g12WeightedRate) + mocowa.fee + sieciowaG12 + prov.handlowa;
 
+            const weekendShare = weekendSharePct / 100;
+            const g12wWeightedRate = ((1 - weekendShare) * prov.g12wDay) + (weekendShare * prov.g12wNight);
+            const g12wMonthly = (kwhMonth * g12wWeightedRate) + mocowa.fee + sieciowaG12w + prov.handlowa;
+
             document.getElementById('bill-res-g11').textContent = formatPLN(g11Monthly, 2);
             document.getElementById('bill-res-g12').textContent = formatPLN(g12Monthly, 2);
+            document.getElementById('bill-res-g12w').textContent = formatPLN(g12wMonthly, 2);
             document.getElementById('bill-sub-g11').textContent = `rocznie ok. ${formatPLN(g11Monthly * 12, 0)}`;
             document.getElementById('bill-sub-g12').textContent = `rocznie ok. ${formatPLN(g12Monthly * 12, 0)}`;
+            document.getElementById('bill-sub-g12w').textContent = `rocznie ok. ${formatPLN(g12wMonthly * 12, 0)}`;
 
             document.getElementById('bill-mocowa').textContent = `${formatPLN(mocowa.fee, 2)} / mies.`;
 
             const handlowaNote = prov.handlowa > 0 ? ` + ${formatPLN(prov.handlowa, 2)} handl.` : '';
-            if (sieciowaG11 === sieciowaG12) {
+            if (sieciowaG11 === sieciowaG12 && sieciowaG12 === sieciowaG12w) {
                 document.getElementById('bill-sieciowa').textContent = `${formatPLN(sieciowaG11, 2)} / mies.${handlowaNote}`;
             } else {
-                document.getElementById('bill-sieciowa').textContent = `G11: ${formatPLN(sieciowaG11, 2)} / G12: ${formatPLN(sieciowaG12, 2)}${handlowaNote}`;
+                document.getElementById('bill-sieciowa').textContent = `G11: ${formatPLN(sieciowaG11, 2)} / G12: ${formatPLN(sieciowaG12, 2)} / G12w: ${formatPLN(sieciowaG12w, 2)}${handlowaNote}`;
             }
 
-            const boxG11 = document.getElementById('bill-box-g11');
-            const boxG12 = document.getElementById('bill-box-g12');
+            const options = [
+                { name: 'G11', val: g11Monthly, box: document.getElementById('bill-box-g11') },
+                { name: 'G12', val: g12Monthly, box: document.getElementById('bill-box-g12') },
+                { name: 'G12w', val: g12wMonthly, box: document.getElementById('bill-box-g12w') }
+            ];
+
+            options.forEach(opt => opt.box.classList.remove('winner'));
+            options.sort((a, b) => a.val - b.val);
+
+            const winner = options[0];
+            const second = options[1];
+            const yearlyDiff = (second.val - winner.val) * 12;
             const verdict = document.getElementById('bill-verdict');
 
-            boxG11.classList.remove('winner');
-            boxG12.classList.remove('winner');
-
-            const yearlyDiff = (g11Monthly - g12Monthly) * 12;
-            if (Math.abs(yearlyDiff) < 12) {
-                verdict.textContent = 'Koszty w G11 i G12 są niemal identyczne';
+            if (yearlyDiff < 12) {
+                verdict.textContent = `Koszty w ${winner.name} i ${second.name} są niemal identyczne`;
                 verdict.style.color = '#374151';
-            } else if (yearlyDiff > 0) {
-                boxG12.classList.add('winner');
-                verdict.textContent = `G12 tańsza o ok. ${formatPLN(yearlyDiff, 0)} / rok`;
-                verdict.style.color = '#065f46';
             } else {
-                boxG11.classList.add('winner');
-                verdict.textContent = `G11 tańsza o ok. ${formatPLN(Math.abs(yearlyDiff), 0)} / rok`;
+                winner.box.classList.add('winner');
+                verdict.textContent = `${winner.name} najtańsza (o ok. ${formatPLN(yearlyDiff, 0)} / rok taniej od ${second.name})`;
                 verdict.style.color = '#065f46';
             }
         }
