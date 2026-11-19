@@ -1160,6 +1160,29 @@ html {
             text-decoration: none;
             font-weight: 600;
         }
+
+         .footer-promo {
+             margin-top: 6px;
+        }
+ 
+         .footer-promo a {
+             display: inline-block;
+             white-space: nowrap;
+        }
+ 
+         .footer-links {
+             margin-top: 10px;
+             display: flex;
+             flex-wrap: wrap;
+             justify-content: center;
+             align-items: center;
+             gap: 6px 16px;
+        }
+ 
+         .footer-links span,
+         .footer-links a {
+             white-space: nowrap;
+        }
           @media (max-width: 639px) {
             header {
                 padding: 8px 0;
@@ -1623,12 +1646,12 @@ html {
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 <strong>ileprad.pl</strong> — Kalkulator kosztów energii elektrycznej | Panele słoneczne, pompa ciepła czy magazyn energii? <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer">Dobierz moc na ilekw.pl</a></p>
-            <p style="margin-top: 6px;">
-                Kontakt: <a href="mailto:kontakt@ileprad.pl">kontakt@ileprad.pl</a> 
-                &nbsp;&bull;&nbsp;
-                <a href="polityka-prywatnosci.html">Polityka Prywatności</a> 
-                &nbsp;&bull;&nbsp;
+            <p>&copy; 2026 <strong>ileprad.pl</strong> — Kalkulator kosztów energii elektrycznej</p>
+            <p class="footer-promo">Panele słoneczne, pompa ciepła czy magazyn energii? <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer">Dobierz moc na ilekw.pl</a></p>
+            <p class="footer-links">
+                <span>Kontakt: <a href="mailto:kontakt@ileprad.pl">kontakt@ileprad.pl</a></span>
+                <a href="poradnik.html">Jak obniżyć rachunek za prąd?</a>
+                <a href="polityka-prywatnosci.html">Polityka Prywatności</a>
                 <a href="pytania-odpowiedzi.html">FAQ</a>
             </p>
         </div>
