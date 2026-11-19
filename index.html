@@ -1858,7 +1858,7 @@ html {
         function renderApplianceTiles() {
             const grid = document.getElementById('appliances-grid');
             grid.innerHTML = appliancesData.map(app => {
-                const defaultClassData = app.classes['C'];
+                const defaultClassData = app.classes['G'];
                 return `
                     <button type="button" class="app-tile" id="tile-${app.id}" aria-pressed="false" onclick="selectAppliance('${app.id}')">
                         <span class="app-icon" aria-hidden="true">${app.icon}</span>
