@@ -1915,7 +1915,7 @@ html {
             document.getElementById('aff-desc').textContent = selectedAppliance.affDesc;
             document.getElementById('aff-link').href = selectedAppliance.affUrl;
 
-           let selectEnergyClass = 'G';
+           selectEnergyClass(selectedEnergyClass) ;
 
                 // Auto-scroll na telefonie do rozwiniętej tabeli klas energetycznych
                 if (window.matchMedia('(max-width: 639px)').matches) {
