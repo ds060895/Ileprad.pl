@@ -9,9 +9,6 @@
     <meta property="og:description" content="Sprawdź koszt pracy urządzeń AGD/RTV w klasach A–G, koszt ładowania EV oraz pełny rachunek za prąd w Polsce w 2026 r.">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='36' fill='%23ffffff'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=optional" rel="stylesheet">
     <style>
         :root {
             --bg-page: #f3f4f6;
@@ -35,9 +32,13 @@
             margin: 0;
             padding: 0;
         }
+html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-page);
             color: var(--text-main);
             line-height: 1.5;
@@ -179,9 +180,8 @@
             border-radius: 999px;
             text-decoration: none;
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            display: inline-block;
+            line-height: 1.35;
         }
 
         .cross-link strong {
@@ -306,6 +306,7 @@
             font-weight: 600;
             font-size: 0.88rem;
             color: var(--text-main);
+            line-height: 1.25;
         }
 
         .app-meta {
@@ -1153,13 +1154,23 @@
             text-decoration: none;
             font-weight: 600;
         }
-        @media (max-width: 639px) {
+          @media (max-width: 639px) {
             header {
                 padding: 8px 0;
                 /* Opcjonalnie: odkomentuj poniższą linię, jeśli na telefonie pasek w ogóle nie ma jechać za ekranem */
                 /* position: static; */
-                    }
-        }   
+            }
+            .header-inner {
+                gap: 8px;
+            }
+            .brand-text p {
+                font-size: 0.85rem;
+            }
+            .cross-link {
+                font-size: 0.75rem;
+                padding: 5px 10px;
+            }
+        }
     </style>
 </head>
 <body>
