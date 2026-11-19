@@ -1482,7 +1482,7 @@ html {
                                 <option value="custom">Własna stawka z umowy (wpisz ręcznie)</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="bill-phase-group">
                             <label class="form-label" for="bill-phase">Układ zasilania:</label>
                             <select id="bill-phase" class="form-select" onchange="calculateBill()">
                                 <option value="1f">1-fazowy (mieszkanie)</option>
@@ -1669,7 +1669,7 @@ html {
                     D: { watts: 520, kwhInfo: '78 kWh / 100 cykli', oldClass: 'dawna klasa: A+++ / A++' },
                     E: { watts: 620, kwhInfo: '93 kWh / 100 cykli', oldClass: 'dawna klasa: A++ / A+' },
                     F: { watts: 740, kwhInfo: '111 kWh / 100 cykli (starsza)', oldClass: 'dawna klasa: A+ / A' },
-                    G: { watts: 860, kwhInfo: '129 kWh / 100 cykli (starsza)', oldClass: 'dawna klasa: A / B ' }
+                    G: { watts: 860, kwhInfo: '129 kWh / 100 cykli (starsza)', oldClass: 'dawna klasa: A / B' }
 
                 }
             },
@@ -1690,7 +1690,7 @@ html {
                     D: { watts: 26, kwhInfo: '228 kWh / rok', oldClass: 'dawna klasa: A+++ / A++' },
                     E: { watts: 33, kwhInfo: '289 kWh / rok', oldClass: 'dawna klasa: A++ / A+' },
                     F: { watts: 42, kwhInfo: '368 kWh / rok (starsza)', oldClass: 'dawna klasa: A+ / A' },
-                    G: { watts: 54, kwhInfo: '473 kWh / rok (starsza)', oldClass: 'dawna klasa: A / B ' }
+                    G: { watts: 54, kwhInfo: '473 kWh / rok (starsza)', oldClass: 'dawna klasa: A / B' }
 
                 }
             },
@@ -1753,7 +1753,7 @@ html {
                     D: { watts: 570, kwhInfo: '85 kWh / 100 cykli', oldClass: 'dawna klasa: A+++ / A++' },
                     E: { watts: 640, kwhInfo: '96 kWh / 100 cykli', oldClass: 'dawna klasa: A++ / A+' },
                     F: { watts: 740, kwhInfo: '111 kWh / 100 cykli (starsza)', oldClass: 'dawna klasa: A+ / A' },
-                    G: { watts: 850, kwhInfo: '127 kWh / 100 cykli (starszya)', oldClass: 'dawna klasa: A / B  }
+                    G: { watts: 850, kwhInfo: '127 kWh / 100 cykli (starsza)', oldClass: 'dawna klasa: A / B'  }
 
                 }
             },
@@ -2217,7 +2217,7 @@ html {
 
             const isCustom = provKey === 'custom';
             document.getElementById('bill-custom-box').style.display = isCustom ? 'block' : 'none';
-            document.getElementById('bill-phase').disabled = isCustom;
+            document.getElementById('bill-phase-group').style.display = isCustom ? 'none' : 'block';
 
             const getOptNum = (id) => {
                 const raw = document.getElementById(id).value.trim();
