@@ -1453,6 +1453,7 @@ html {
                                 <option value="enea">Enea</option>
                                 <option value="energa">Energa Obrót</option>
                                 <option value="eon">E.ON Polska</option>
+                                <option value="custom">Własna stawka z umowy (wpisz ręcznie)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -1463,7 +1464,39 @@ html {
                             </select>
                         </div>
                     </div>
-
+<div id="bill-custom-box" style="display: none; background: #f8fafc; border: 1px solid #dbeafe; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                        <div class="bill-inputs-row">
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" for="bill-custom-g11">Stawka G11 (zł/kWh brutto):</label>
+                                <input type="number" id="bill-custom-g11" class="form-input" value="1.05" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" for="bill-custom-fixed">Opłaty stałe z faktury (zł/mies.):</label>
+                                <input type="number" id="bill-custom-fixed" class="form-input" value="15.00" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                        </div>
+                        <div class="bill-inputs-row">
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" for="bill-custom-g12-day">G12 dzień (zł/kWh):</label>
+                                <input type="number" id="bill-custom-g12-day" class="form-input" value="1.15" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label class="form-label" for="bill-custom-g12-night">G12 noc (zł/kWh):</label>
+                                <input type="number" id="bill-custom-g12-night" class="form-input" value="0.65" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                        </div>
+                        <div class="bill-inputs-row">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="bill-custom-g12w-day">G12w szczyt (zł/kWh):</label>
+                                <input type="number" id="bill-custom-g12w-day" class="form-input" value="1.20" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="bill-custom-g12w-night">G12w weekend (zł/kWh):</label>
+                                <input type="number" id="bill-custom-g12w-night" class="form-input" value="0.68" min="0" step="0.01" oninput="calculateBill()">
+                            </div>
+                        </div>
+                        <span class="section-subtitle" style="display: block; margin-top: 8px;">* Opłata mocowa (5,28–29,58 zł/mies.) doliczana jest automatycznie wg zużycia rocznego.</span>
+</div>
                     <div class="form-group">
                         <label class="form-label" for="bill-kwh">Miesięczne zużycie całego domu (kWh/mies.):</label>
                         <input type="number" id="bill-kwh" class="form-input" value="180" min="0" max="5000" step="10" oninput="calculateBill()">
@@ -1514,6 +1547,9 @@ html {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="legal-disclaimer">
+                <strong>Informacja:</strong> Podane w symulatorze kwoty mają charakter wyłącznie orientacyjny i szacunkowy. Rzeczywista wysokość rachunku może się różnić w zależności od zapisów indywidualnej umowy ze sprzedawcą i dystrybutorem, dodatkowych opłat na fakturze (np. opłaty przejściowej, OZE, kogeneracyjnej, abonamentowej czy handlowej), okresów rozliczeniowych oraz aktualnych taryf URE i stawek podatkowych. Wyliczenia nie stanowią oferty handlowej ani podstawy do jakichkolwiek roszczeń.
             </div>
         </section>
 
@@ -2142,12 +2178,30 @@ html {
             document.getElementById('bill-night-val').textContent = nightSharePct + '%';
             document.getElementById('bill-weekend-val').textContent = weekendSharePct + '%';
 
-            const prov = billProvidersData[provKey];
+            const isCustom = provKey === 'custom';
+            document.getElementById('bill-custom-box').style.display = isCustom ? 'block' : 'none';
+            document.getElementById('bill-phase').disabled = isCustom;
+
+            const getNum = (id) => {
+                const v = parseFloat(document.getElementById(id).value);
+                return Number.isFinite(v) && v >= 0 ? v : 0;
+            };
+
+            const prov = isCustom ? {
+                g11: getNum('bill-custom-g11'),
+                g12Day: getNum('bill-custom-g12-day'),
+                g12Night: getNum('bill-custom-g12-night'),
+                g12wDay: getNum('bill-custom-g12w-day'),
+                g12wNight: getNum('bill-custom-g12w-night'),
+                handlowa: 0
+            } : billProvidersData[provKey];
+
             const kwhYear = kwhMonth * 12;
             const mocowa = getMocowa2026(kwhYear);
-            const sieciowaG11 = phase === '1f' ? prov.g11Fixed1f : prov.g11Fixed3f;
-            const sieciowaG12 = phase === '1f' ? prov.g12Fixed1f : prov.g12Fixed3f;
-            const sieciowaG12w = phase === '1f' ? prov.g12wFixed1f : prov.g12wFixed3f;
+            const customFixed = isCustom ? getNum('bill-custom-fixed') : 0;
+            const sieciowaG11 = isCustom ? customFixed : (phase === '1f' ? prov.g11Fixed1f : prov.g11Fixed3f);
+            const sieciowaG12 = isCustom ? customFixed : (phase === '1f' ? prov.g12Fixed1f : prov.g12Fixed3f);
+            const sieciowaG12w = isCustom ? customFixed : (phase === '1f' ? prov.g12wFixed1f : prov.g12wFixed3f);
 
             document.getElementById('bill-year-info').textContent = `Rocznie: ${formatNumber(kwhYear, 0)} kWh (próg opłaty mocowej: ${mocowa.label})`;
 
