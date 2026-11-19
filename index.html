@@ -1809,6 +1809,12 @@
         }
 
         function selectAppliance(appId) {
+            if (selectedAppliance && selectedAppliance.id === appId) {
+               clearSelectedApplianceUI();
+                calculateMain();
+               return;
+           }
+
             selectedAppliance = appliancesData.find(a => a.id === appId);
             if (!selectedAppliance) return;
 
