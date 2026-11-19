@@ -1170,6 +1170,21 @@ html {
                 font-size: 0.75rem;
                 padding: 5px 10px;
             }
+              .ev-banner-header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+                gap: 14px;
+            }
+            .ev-banner-left {
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .ev-toggle-btn {
+                width: 100%;
+                text-align: center;
+                padding: 10px 14px;
+            }
         }
         @media (max-width: 480px) {
             .bill-inputs-row {
@@ -1353,7 +1368,7 @@ html {
                         <button type="button" class="chip-btn" onclick="setPriceRate(1.10, this)">Energa 1,10 zł</button>
                         <button type="button" class="chip-btn" onclick="setPriceRate(0.96, this)">E.ON 0,96 zł</button>
                     </div>
-                    <input type="number" id="input-price" class="form-input" value="1.04" min="0" step="any" inputmode="decimal" oninput="handleEvRateInput()">
+                    <input type="number" id="input-price" class="form-input" value="1.04" min="0" step="any" inputmode="decimal" oninput="handleManualPrice()">
                 </div>
 
                 <button type="button" class="btn-primary-full" onclick="calculateMain(true)">Oblicz koszt</button>
@@ -1535,7 +1550,7 @@ html {
                         </div>
                         <div class="bill-box" id="bill-box-g12w">
                             <div class="bill-box-label">Taryfa G12w</div>
-                            <div class="bill-box-price" id="bill-res-g12w">219,00 zł</div>
+                            <div class="bill-box-price" id="bill-res-g12w">205,00 zł</div>
                             <div class="bill-box-sub" id="bill-sub-g12w">miesięcznie brutto</div>
                         </div>
                     </div>
@@ -1551,7 +1566,7 @@ html {
                         </div>
                         <div class="ev-stat-row">
                             <span>Rekomendacja taryfy:</span>
-                            <strong id="bill-verdict" style="color: #065f46;">G12 tańsza o ok. 185 zł / rok</strong>
+                            <strong id="bill-verdict" style="color: #065f46;">G12w najtańsza (o ok. 66zł / rok taniej od G12)</strong>
                         </div>
                     </div>
                 </div>
@@ -1805,7 +1820,7 @@ html {
             ],
             G12: [
                 { provider: 'E.ON Polska', region: 'Warszawa (strefa dzienna / nocna)', active: '0,66 / 0,53 zł', dist: '0,37 / 0,12 zł', dayTotal: 1.03, nightTotal: 0.65, label: '1,03 zł dzień / 0,65 zł noc' },
-                { provider: 'Tauron', region: 'Południe Polski (strefa dzienna / nocna)', active: '0,67 / 0,51 zł', dist: '0,40 / 0,12 zł', dayTotal: 1.08, nightTotal: 0.64, label: '1,08 zł dzień / 0,64 zł noc' },
+                { provider: 'Tauron', region: 'Południe Polski (strefa dzienna / nocna)', active: '0,67 / 0,51 zł', dist: '0,41 / 0,13 zł', dayTotal: 1.08, nightTotal: 0.64, label: '1,08 zł dzień / 0,64 zł noc' },
                 { provider: 'Enea', region: 'Zachód Polski (strefa dzienna / nocna)', active: '0,72 / 0,42 zł', dist: '0,40 / 0,17 zł', dayTotal: 1.11, nightTotal: 0.59, label: '1,11 zł dzień / 0,59 zł noc' },
                 { provider: 'PGE Obrót', region: 'Polska Centralna i Wschód (dzień / noc)', active: '0,70 / 0,46 zł', dist: '0,55 / 0,15 zł', dayTotal: 1.25, nightTotal: 0.61, label: '1,25 zł dzień / 0,61 zł noc' },
                 { provider: 'Energa Obrót', region: 'Północ Polski (strefa dzienna / nocna)', active: '0,72 / 0,47 zł', dist: '0,53 / 0,16 zł', dayTotal: 1.24, nightTotal: 0.62, label: '1,24 zł dzień / 0,62 zł noc' },
