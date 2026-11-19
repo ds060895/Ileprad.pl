@@ -1286,7 +1286,7 @@ html {
                             <button type="button" class="chip-btn" onclick="setEvRate(1.95, this)">Publiczna AC (1,95 zł)</button>
                             <button type="button" class="chip-btn" onclick="setEvRate(2.89, this)">Szybka DC (2,89 zł)</button>
                         </div>
-                        <input type="number" id="ev-rate" class="form-input" value="1.04" min="0" step="any" inputmode="decimal">
+                        <input type="number" id="ev-rate" class="form-input" value="1.04" min="0" step="any" inputmode="decimal" oninput="handleEvRateInput()">
                     </div>
 
                     <!-- Prawa strona EV: Wynik i link do kategorii Allegro -->
@@ -1353,7 +1353,7 @@ html {
                         <button type="button" class="chip-btn" onclick="setPriceRate(1.10, this)">Energa 1,10 zł</button>
                         <button type="button" class="chip-btn" onclick="setPriceRate(0.96, this)">E.ON 0,96 zł</button>
                     </div>
-                    <input type="number" id="input-price" class="form-input" value="1.04" min="0" step="any" inputmode="decimal">
+                    <input type="number" id="input-price" class="form-input" value="1.04" min="0" step="any" inputmode="decimal" oninput="handleEvRateInput()">
                 </div>
 
                 <button type="button" class="btn-primary-full" onclick="calculateMain(true)">Oblicz koszt</button>
@@ -1473,31 +1473,31 @@ html {
                         <div class="bill-inputs-row">
                             <div class="form-group" style="margin-bottom: 10px;">
                                 <label class="form-label" for="bill-custom-g11">Stawka G11 (zł/kWh brutto):</label>
-                                <input type="number" id="bill-custom-g11" class="form-input" value="1.05" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-g11" class="form-input" value="1.05" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                             <div class="form-group" style="margin-bottom: 10px;">
                                 <label class="form-label" for="bill-custom-fixed">Opłaty stałe z faktury (zł/mies.):</label>
-                                <input type="number" id="bill-custom-fixed" class="form-input" value="15.00" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-fixed" class="form-input" value="15.00" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                         </div>
                         <div class="bill-inputs-row">
                             <div class="form-group" style="margin-bottom: 10px;">
                                 <label class="form-label" for="bill-custom-g12-day">G12 dzień (zł/kWh):</label>
-                                <input type="number" id="bill-custom-g12-day" class="form-input" value="1.15" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-g12-day" class="form-input" value="1.15" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                             <div class="form-group" style="margin-bottom: 10px;">
                                 <label class="form-label" for="bill-custom-g12-night">G12 noc (zł/kWh):</label>
-                                <input type="number" id="bill-custom-g12-night" class="form-input" value="0.65" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-g12-night" class="form-input" value="0.65" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                         </div>
                         <div class="bill-inputs-row">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="bill-custom-g12w-day">G12w szczyt (zł/kWh):</label>
-                                <input type="number" id="bill-custom-g12w-day" class="form-input" value="1.20" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-g12w-day" class="form-input" value="1.20" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="bill-custom-g12w-night">G12w weekend (zł/kWh):</label>
-                                <input type="number" id="bill-custom-g12w-night" class="form-input" value="0.68" min="0" step="any" inputmode="decimal">
+                                <input type="number" id="bill-custom-g12w-night" class="form-input" value="0.68" min="0" step="any" inputmode="decimal" oninput="calculateBill()">
                             </div>
                         </div>
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #374151; margin-top: 10px; cursor: pointer;">
@@ -1511,7 +1511,7 @@ html {
                         <span class="section-subtitle" id="bill-year-info">Rocznie: 2 160 kWh (próg opłaty mocowej: 1 200–2 800 kWh)</span>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-group">
                         <label class="form-label" for="bill-night-share">Udział zużycia w strefie nocnej dla G12: <strong id="bill-night-val">40%</strong></label>
                         <input type="range" id="bill-night-share" min="10" max="90" value="40" style="width: 100%;" oninput="calculateBill()">
                     </div>
@@ -2284,7 +2284,6 @@ html {
                     verdict.style.color = '#065f46';
                 }
             }
-        }
         }
 
         // --- TABELA STAWEK PRĄDU 2026 ---
