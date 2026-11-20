@@ -1314,8 +1314,8 @@
 
 .hp-toggle-btn {
     background: #ffffff;
-    border: 1px solid #a5f3fc;
-    color: #0e7490;
+    border: 1px solid #bfdbfe;
+    color: var(--primary);
     font-weight: 600;
     font-size: 0.8rem;
     padding: 8px 14px;
@@ -1325,7 +1325,7 @@
 }
 
 .hp-banner-header:hover .hp-toggle-btn {
-    background: #0e7490;
+    background: var(--primary);
     color: #fff;
 }
 
@@ -1565,7 +1565,7 @@
                     <span class="hp-icon-badge" aria-hidden="true">🌡️</span>
                     <span class="hp-banner-text">
                         <span class="hp-banner-title">Kalkulator zużycia prądu przez pompę ciepła</span>
-                        <span class="hp-banner-desc">Suwak temperatury (-30°C do +30°C), podłogówka / grzejniki, CWU, bufor i taryfa</span>
+                        <span class="hp-banner-desc">Pompa powietrze–woda lub gruntowa, suwak temp. (-30°C do +30°C), CWU, bufor i taryfa</span>
                     </span>
                 </span>
                 <span class="hp-toggle-btn" id="hp-toggle-btn">Oblicz pompę ciepła ▼</span>
@@ -1573,6 +1573,9 @@
         
             <div class="hp-panel-body" id="hp-panel-body">
                 <div class="hp-grid">
+                   <div class="legal-disclaimer">
+                    <strong>Informacja:</strong> Wyliczenia mają charakter wyłącznie orientacyjny i szacunkowy. Rzeczywiste zużycie energii elektrycznej oraz koszty pracy pompy ciepła mogą się różnić w zależności od konkretnego modelu urządzenia (charakterystyki sprężarki i inwertera), jakości izolacji budynku, ustawionej temperatury wewnętrznej i krzywej grzewczej, wilgotności powietrza, cykli odszraniania, temperatury gruntu w danym sezonie oraz aktualnej taryfy i opłat stałych sprzedawcy energii.
+                </div> 
                     <div>
                         <div class="form-group">
                             <div class="hp-temp-header">
@@ -1595,7 +1598,14 @@
                                 <span>+30°C</span>
                             </div>
                         </div>
-        
+                        <div class="form-group">
+                            <label class="form-label" for="hp-type">Typ pompy ciepła:</label>
+                            <select id="hp-type" class="form-select" onchange="calculateHeatPump()">
+                                <option value="air" selected>Powietrze–woda (zewnętrzna / split / monoblok)</option>
+                                <option value="ground">Gruntowa (solanka–woda: odwiert / kolektor)</option>
+                            </select>
+                        </div>
+                        
                         <div class="hp-fields-grid">
                             <div class="form-group">
                                 <label class="form-label" for="hp-mode">Tryb danych o domu:</label>
@@ -1703,11 +1713,10 @@
         
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <div class="hp-action-row">
-                                <button type="button" class="use-rate-btn" onclick="applyHpToMainCalculator()">Przenieś do kalkulatora ↑</button>
-                                <a href="poradnik.html" style="font-size: 0.78rem; color: var(--primary, #2563eb); font-weight: 600; text-decoration: none;">Poradnik →</a>
+                                <button type="button" class="use-rate-btn" style="width: 100%;" onclick="applyHpToMainCalculator()">Przenieś do kalkulatora ↓</button>
                             </div>
                             <a href="https://ilekw.pl" target="_blank" rel="noopener noreferrer" style="font-size: 0.78rem; color: var(--primary, #2563eb); font-weight: 600; text-decoration: none; text-align: center;">
-                                Dobierz moc pompy ciepła i PV na ilekw.pl →
+                                Panele słoneczne, pompa ciepła czy magazyn energii? Dobierz moc na ilekw.pl →
                             </a>
                         </div>
                     </div>
@@ -2959,216 +2968,230 @@
             calculateHeatPump();
         }
         
-        function getHpFlowTemp(tempC, heatingType) {
+       function getHpFlowTemp(tempC, heatingType, bufferType = 'none') {
             const clampedT = Math.max(-25, Math.min(16, tempC));
-            const drop = 15 - clampedT;
-            if (heatingType === 'floor') return Math.max(25, 29 + 0.17 * drop);
-            if (heatingType === 'radiators') return Math.max(35, 37 + 0.51 * drop);
-            return Math.max(30, 33 + 0.34 * drop);
+            const drop = 16 - clampedT;
+            let baseTemp;
+            if (heatingType === 'floor') baseTemp = Math.max(25, 28.5 + 0.18 * drop);
+            else if (heatingType === 'radiators') baseTemp = Math.max(35, 36.5 + 0.52 * drop);
+            else baseTemp = Math.max(30, 32.5 + 0.35 * drop);
+
+            const bufferPenalty = bufferType === 'large' ? 2.5 : (bufferType === 'medium' ? 1.5 : 0);
+            return baseTemp + bufferPenalty;
         }
-        
-        function getHpBackupShare(tempC) {
+
+        function getHpBrineTemp(tempC) {
+            return Math.max(-1.5, Math.min(7, 1.5 + 0.14 * tempC));
+        }
+
+        function getHpBackupShare(tempC, hpType = 'air') {
+            if (hpType === 'ground') return 0;
             if (tempC <= -25) return 1;
             if (tempC >= -10) return 0;
-            return Math.min(0.65, Math.pow((-10 - tempC) / 20, 1.4));
+            return Math.min(0.75, Math.pow((-10 - tempC) / 18, 1.4));
         }
-        
-        function getHpCopAtTemp(tempC, heatingType) {
+
+        function getHpCopAtTemp(tempC, heatingType, hpType = 'air', bufferType = 'none') {
+            const flowTemp = getHpFlowTemp(tempC, heatingType, bufferType);
+
+            if (hpType === 'ground') {
+                const brineTemp = getHpBrineTemp(tempC);
+                const deltaLift = Math.max(12, flowTemp - brineTemp + 3);
+                const rawCarnotCop = 0.52 * ((flowTemp + 273.15) / deltaLift);
+                const maxCop = heatingType === 'floor' ? 5.5 : (heatingType === 'radiators' ? 4.3 : 4.9);
+                return Math.max(2.0, Math.min(maxCop, rawCarnotCop));
+            }
+
             if (tempC <= -25) return 1.0;
-        
-            const flowTemp = getHpFlowTemp(tempC, heatingType);
+
             const deltaLift = Math.max(10, flowTemp - tempC + 5);
-        
-            // Sprawność względem cyklu Carnota (~48%) z uwzględnieniem pomp obiegowych i odszraniania
             const rawCarnotCop = 0.48 * ((flowTemp + 273.15) / deltaLift);
             const defrostDist = Math.abs(tempC - 1);
-            const defrostFactor = defrostDist < 7 ? 1 - 0.08 * (1 - defrostDist / 7) : 1;
-        
+            const defrostFactor = defrostDist < 7 ? 1 - 0.09 * (1 - defrostDist / 7) : 1;
+
             const maxCop = heatingType === 'floor' ? 5.3 : (heatingType === 'radiators' ? 4.2 : 4.8);
             const compressorCop = Math.max(1.3, Math.min(maxCop, rawCarnotCop * defrostFactor));
-        
-            const backupShare = getHpBackupShare(tempC);
+
+            const backupShare = getHpBackupShare(tempC, hpType);
             if (backupShare <= 0) return compressorCop;
-        
+
             return 1 / (((1 - backupShare) / compressorCop) + (backupShare / 1.0));
         }
-        
-        function getHpCwuCopAtTemp(tempC) {
-            if (tempC <= -25) return 1.0;
-        
+
+        function getHpCwuCopAtTemp(tempC, hpType = 'air') {
             const cwuFlowTemp = 52;
+
+            if (hpType === 'ground') {
+                const brineTemp = getHpBrineTemp(tempC);
+                const deltaLift = Math.max(12, cwuFlowTemp - brineTemp + 3);
+                const rawCarnotCop = 0.52 * ((cwuFlowTemp + 273.15) / deltaLift);
+                return Math.max(2.0, Math.min(4.1, rawCarnotCop));
+            }
+
+            if (tempC <= -25) return 1.0;
+
             const deltaLift = Math.max(12, cwuFlowTemp - tempC + 5);
-            const rawCarnotCop = 0.48 * ((cwuFlowTemp + 273.15) / deltaLift);
+            const rawCarnotCop = 0.47 * ((cwuFlowTemp + 273.15) / deltaLift);
             const defrostDist = Math.abs(tempC - 1);
-            const defrostFactor = defrostDist < 7 ? 1 - 0.08 * (1 - defrostDist / 7) : 1;
-        
-            const compressorCop = Math.max(1.3, Math.min(4.3, rawCarnotCop * defrostFactor));
-            const backupShare = getHpBackupShare(tempC);
+            const defrostFactor = defrostDist < 7 ? 1 - 0.09 * (1 - defrostDist / 7) : 1;
+
+            const compressorCop = Math.max(1.3, Math.min(4.2, rawCarnotCop * defrostFactor));
+            const backupShare = getHpBackupShare(tempC, hpType);
             if (backupShare <= 0) return compressorCop;
-        
+
             return 1 / (((1 - backupShare) / compressorCop) + (backupShare / 1.0));
         }
-        
+
         function getHpDailyCwuHeat(cwuOption) {
             if (cwuOption === 'no') return 0;
             if (cwuOption === 'small') return 3.2;
             if (cwuOption === 'large') return 6.8;
-            return 4.8; // 'yes' (3-4 osoby)
+            return 4.8;
         }
-        
-        function getHpBufferStandbyKwhDay(bufferType) {
-            if (bufferType === 'large') return 0.65;
-            if (bufferType === 'medium') return 0.30;
+
+        function getHpBufferHeatLossKwhDay(bufferType) {
+            if (bufferType === 'large') return 1.0;
+            if (bufferType === 'medium') return 0.5;
             return 0;
         }
-        
+
         function getDailyHeatingHeatAtTemp(tempC, annualHeatingHeat) {
             if (annualHeatingHeat <= 0 || tempC >= HP_HEATING_CUTOFF_C) return 0;
             return annualHeatingHeat * ((HP_HEATING_CUTOFF_C - tempC) / HP_HDD_TOTAL);
         }
-        
+
         function calculateHeatPump() {
             const tempEl = document.getElementById('hp-temp');
             if (!tempEl) return;
-        
+
             const parsedTemp = parseInt(tempEl.value, 10);
             const tempC = Number.isFinite(parsedTemp) ? Math.max(-30, Math.min(30, parsedTemp)) : -5;
             document.getElementById('hp-temp-val').textContent = `${tempC > 0 ? '+' : ''}${tempC}°C`;
-        
+
+            const hpTypeEl = document.getElementById('hp-type');
+            const hpType = hpTypeEl ? hpTypeEl.value : 'air';
+
             const mode = document.getElementById('hp-mode').value;
             const rawArea = parseFloat(document.getElementById('hp-area').value);
             const area = Number.isFinite(rawArea) && rawArea > 0 ? rawArea : 0;
-        
+
             const rawIns = parseFloat(document.getElementById('hp-insulation').value);
             const specificHeat = Number.isFinite(rawIns) && rawIns > 0 ? rawIns : 95;
-        
+
             const rawDemand = parseFloat(document.getElementById('hp-demand').value);
             const annualHeatingHeat = mode === 'area'
                 ? area * specificHeat
                 : (Number.isFinite(rawDemand) && rawDemand >= 0 ? rawDemand : 0);
-        
+
             const heatingType = document.getElementById('hp-heating-type').value;
             const bufferType = document.getElementById('hp-buffer').value;
             const cwuOption = document.getElementById('hp-cwu').value;
-        
+
             const rawRate = parseFloat(document.getElementById('hp-rate').value);
             const rate = Number.isFinite(rawRate) && rawRate >= 0 ? rawRate : 0;
-        
-            // Dobowe zapotrzebowanie i zużycie w wybranej temperaturze
+
             const dailyHeatingHeat = getDailyHeatingHeatAtTemp(tempC, annualHeatingHeat);
             const dailyCwuHeat = getHpDailyCwuHeat(cwuOption);
             const isHeatingActive = dailyHeatingHeat > 0;
-        
-            const copCoNow = getHpCopAtTemp(tempC, heatingType);
-            const copCwuNow = getHpCwuCopAtTemp(tempC);
-            const standbyKwhDay = isHeatingActive ? getHpBufferStandbyKwhDay(bufferType) : 0;
-        
-            const dailyCoElKwh = isHeatingActive ? (dailyHeatingHeat / copCoNow) : 0;
+
+            const flowTempNow = getHpFlowTemp(tempC, heatingType, bufferType);
+            const copCoNow = getHpCopAtTemp(tempC, heatingType, hpType, bufferType);
+            const copCwuNow = getHpCwuCopAtTemp(tempC, hpType);
+            const bufferHeatLossDay = isHeatingActive ? getHpBufferHeatLossKwhDay(bufferType) : 0;
+            const auxKwhDay = (isHeatingActive || dailyCwuHeat > 0) ? 0.20 : 0;
+
+            const dailyCoElKwh = isHeatingActive ? ((dailyHeatingHeat + bufferHeatLossDay) / copCoNow) : 0;
             const dailyCwuElKwh = dailyCwuHeat > 0 ? (dailyCwuHeat / copCwuNow) : 0;
-            const dailyElKwh = dailyCoElKwh + dailyCwuElKwh + standbyKwhDay;
-        
+            const dailyElKwh = dailyCoElKwh + dailyCwuElKwh + auxKwhDay;
+
             const totalDailyHeat = dailyHeatingHeat + dailyCwuHeat;
             const effectiveCopNow = dailyElKwh > 0 && totalDailyHeat > 0
                 ? (totalDailyHeat / dailyElKwh)
                 : null;
-        
-            // Roczne obliczenia przez całkowanie po rozkładzie temperatur dla Polski
+
             const unitHeatRef = annualHeatingHeat > 0 ? annualHeatingHeat : 1000;
             let annualUnitHeatingEl = 0;
+            let annualBufferElKwh = 0;
             let annualCwuElKwh = 0;
-        
+            let annualAuxElKwh = 0;
+            const bufferLossRef = getHpBufferHeatLossKwhDay(bufferType);
+
             HP_CLIMATE_BINS.forEach(bin => {
+                const copCoBin = getHpCopAtTemp(bin.temp, heatingType, hpType, bufferType);
                 const binUnitHeat = getDailyHeatingHeatAtTemp(bin.temp, unitHeatRef) * bin.days;
                 if (binUnitHeat > 0) {
-                    annualUnitHeatingEl += binUnitHeat / getHpCopAtTemp(bin.temp, heatingType);
+                    annualUnitHeatingEl += binUnitHeat / copCoBin;
+                }
+                const binHeatingActive = annualHeatingHeat > 0 && bin.temp < HP_HEATING_CUTOFF_C;
+                if (binHeatingActive && bufferLossRef > 0) {
+                    annualBufferElKwh += (bufferLossRef * bin.days) / copCoBin;
                 }
                 if (dailyCwuHeat > 0) {
-                    annualCwuElKwh += (dailyCwuHeat * bin.days) / getHpCwuCopAtTemp(bin.temp);
+                    annualCwuElKwh += (dailyCwuHeat * bin.days) / getHpCwuCopAtTemp(bin.temp, hpType);
+                }
+                if (binHeatingActive || dailyCwuHeat > 0) {
+                    annualAuxElKwh += 0.20 * bin.days;
                 }
             });
-        
+
             const scop = annualUnitHeatingEl > 0 ? (unitHeatRef / annualUnitHeatingEl) : 0;
             const annualHeatingElKwh = annualHeatingHeat > 0 ? annualUnitHeatingEl : 0;
-            const annualBufferElKwh = annualHeatingHeat > 0 ? (getHpBufferStandbyKwhDay(bufferType) * HP_HEATING_DAYS) : 0;
-            const annualElKwh = annualHeatingElKwh + annualCwuElKwh + annualBufferElKwh;
-        
+            const annualElKwh = annualHeatingElKwh + annualCwuElKwh + annualBufferElKwh + annualAuxElKwh;
+
             const dailyCost = dailyElKwh * rate;
             const monthlyCost = dailyCost * 30;
             const yearlyCost = annualElKwh * rate;
             const avgPowerKw = dailyElKwh / 24;
-        
+
             lastHpCalculation = {
                 dailyElKwh,
                 rate
             };
-        
+
             document.getElementById('hp-daily-cost').textContent = `${hpFormatPLN(dailyCost, 2)} / dzień`;
             document.getElementById('hp-monthly-cost').textContent = `ok. ${hpFormatPLN(monthlyCost, 0)} / 30 dni przy ${tempC > 0 ? '+' : ''}${tempC}°C`;
             document.getElementById('hp-daily-kwh').textContent = `${hpFormatNumber(dailyElKwh, 1)} kWh / dzień`;
             document.getElementById('hp-cop-val').textContent = effectiveCopNow !== null ? hpFormatNumber(effectiveCopNow, 2) : '— (brak grzania)';
             document.getElementById('hp-scop-val').textContent = scop > 0 ? hpFormatNumber(scop, 2) : '—';
             document.getElementById('hp-yearly-cost').textContent = `${hpFormatPLN(yearlyCost, 0)} / rok`;
-        
+
             const avgPowerEl = document.getElementById('hp-avg-power');
             if (avgPowerEl) {
                 avgPowerEl.textContent = `${hpFormatNumber(avgPowerKw, 2)} kW (${Math.round(avgPowerKw * 1000)} W)`;
             }
-        
+
             const yearlyKwhEl = document.getElementById('hp-yearly-kwh');
             if (yearlyKwhEl) {
                 yearlyKwhEl.textContent = `${hpFormatNumber(annualElKwh, 0)} kWh / rok`;
             }
-        
+
             const statusBadge = document.getElementById('hp-status-badge');
             if (statusBadge) {
                 statusBadge.classList.remove('warn', 'idle');
+                const flowInfo = `${Math.round(flowTempNow)}°C`;
                 if (!isHeatingActive && dailyCwuHeat === 0) {
                     statusBadge.textContent = 'Tryb czuwania — ogrzewanie i CWU wyłączone';
                     statusBadge.classList.add('idle');
                 } else if (!isHeatingActive) {
-                    statusBadge.textContent = 'Poza sezonem grzewczym (≥ +16°C) — pracuje tylko CWU';
+                    statusBadge.textContent = hpType === 'ground'
+                        ? `Poza sezonem grzewczym (≥ +16°C) — CWU ze źródła w gruncie (${hpFormatNumber(getHpBrineTemp(tempC), 1)}°C)`
+                        : 'Poza sezonem grzewczym (≥ +16°C) — pracuje tylko CWU';
                     statusBadge.classList.add('idle');
+                } else if (hpType === 'ground') {
+                    const brineInfo = hpFormatNumber(getHpBrineTemp(tempC), 1);
+                    statusBadge.textContent = `Pompa gruntowa (solanka ${brineInfo}°C, zasilanie ${flowInfo}) — bez grzałki`;
                 } else if (tempC <= -25) {
                     statusBadge.textContent = 'Silny mróz: awaryjna praca grzałką elektryczną (COP 1,0)';
                     statusBadge.classList.add('warn');
                 } else if (tempC < -10) {
-                    statusBadge.textContent = 'Praca biwalentna: poniżej -10°C wspomaganie grzałką';
+                    statusBadge.textContent = `Praca biwalentna (zasilanie ${flowInfo}): wspomaganie grzałką poniżej -10°C`;
                     statusBadge.classList.add('warn');
                 } else if (dailyCwuHeat > 0) {
-                    statusBadge.textContent = 'Tryb grzewczy: ogrzewanie CO + CWU';
+                    statusBadge.textContent = `Tryb grzewczy: CO (zasilanie ${flowInfo}) + CWU`;
                 } else {
-                    statusBadge.textContent = 'Tryb grzewczy: tylko ogrzewanie CO';
+                    statusBadge.textContent = `Tryb grzewczy: tylko CO (zasilanie ${flowInfo})`;
                 }
             }
-        }
-        
-        function applyHpToMainCalculator() {
-            const dailyKwh = Number.isFinite(lastHpCalculation.dailyElKwh) ? lastHpCalculation.dailyElKwh : 0;
-            const avgWatts = Math.round((dailyKwh * 1000) / 24);
-            const rate = parseFloat(document.getElementById('hp-rate').value);
-        
-            const powerInput = document.getElementById('input-power');
-            const hoursInput = document.getElementById('input-hours');
-            const priceInput = document.getElementById('input-price');
-        
-            if (powerInput && hoursInput) {
-                if (typeof clearSelectedApplianceUI === 'function') clearSelectedApplianceUI();
-                powerInput.value = avgWatts;
-                hoursInput.value = 24;
-                if (priceInput && Number.isFinite(rate) && rate >= 0) {
-                    priceInput.value = rate.toFixed(2);
-                }
-                if (typeof calculateMain === 'function') calculateMain(true);
-                if (typeof showToast === 'function') {
-                    showToast(`Przeniesiono pompę ciepła: śr. ${avgWatts} W (24h/d)`);
-                }
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', calculateHeatPump);
-        } else {
-            calculateHeatPump();
         }
 
         // Start aplikacji
