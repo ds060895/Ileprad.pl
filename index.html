@@ -1674,10 +1674,10 @@
                              <button type="button" class="chip-btn" data-custom="true" onclick="selectHpCustomRate(this)">Stawka własna</button>
                          </div>
                          <div id="hp-rate-custom-wrap" style="display: none; margin-top: 8px;">
-                             <input type="number" id="hp-rate" class="form-input" value="1.04" min="0" step="0.01" inputmode="decimal" placeholder="Wpisz własną stawkę (np. 0,95)" oninput="handleHpRateInput()">
+                             <input type="number" id="hp-rate" class="form-input" value="1.04" min="0" step="any" inputmode="decimal" placeholder="Wpisz własną stawkę (np. 0,95)" oninput="handleHpRateInput()">
                          </div>
                      </div>
-                            <input type="number" id="hp-rate" class="form-input" value="1.04" min="0" step="0.01" inputmode="decimal" oninput="handleHpRateInput()">
+
                         </div>
                     </div>
         
@@ -2882,9 +2882,6 @@
             return sum + (bin.temp < HP_HEATING_CUTOFF_C ? (HP_HEATING_CUTOFF_C - bin.temp) * bin.days : 0);
         }, 0);
         
-        const HP_HEATING_DAYS = HP_CLIMATE_BINS.reduce((sum, bin) => {
-            return sum + (bin.temp < HP_HEATING_CUTOFF_C ? bin.days : 0);
-        }, 0);
         
         let lastHpCalculation = {
             dailyElKwh: 0,
@@ -3151,7 +3148,7 @@
                 }
             });
 
-            const scop = annualUnitHeatingEl > 0 ? (unitHeatRef / annualUnitHeatingEl) : 0;
+            const scop = (annualHeatingHeat > 0 && annualUnitHeatingEl > 0) ? (unitHeatRef / annualUnitHeatingEl) : 0;
             const annualHeatingElKwh = annualHeatingHeat > 0 ? annualUnitHeatingEl : 0;
             const annualElKwh = annualHeatingElKwh + annualCwuElKwh + annualBufferElKwh + annualAuxElKwh;
 
