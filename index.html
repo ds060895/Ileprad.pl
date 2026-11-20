@@ -1398,7 +1398,10 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
-
+.hp-grid > div,
+.hp-fields-grid > .form-group {
+    min-width: 0;
+}
 .hp-result-box {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -1573,10 +1576,7 @@
         
             <div class="hp-panel-body" id="hp-panel-body">
                 <div class="hp-grid">
-                   <div class="legal-disclaimer">
-                    <strong>Informacja:</strong> Wyliczenia mają charakter wyłącznie orientacyjny i szacunkowy. Rzeczywiste zużycie energii elektrycznej oraz koszty pracy pompy ciepła mogą się różnić w zależności od konkretnego modelu urządzenia (charakterystyki sprężarki i inwertera), jakości izolacji budynku, ustawionej temperatury wewnętrznej i krzywej grzewczej, wilgotności powietrza, cykli odszraniania, temperatury gruntu w danym sezonie oraz aktualnej taryfy i opłat stałych sprzedawcy energii.
-                </div> 
-                    <div>
+                 <div>
                         <div class="form-group">
                             <div class="hp-temp-header">
                                 <label class="form-label" for="hp-temp" style="margin-bottom: 0;">Temperatura zewnętrzna:</label>
@@ -1666,12 +1666,17 @@
         
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label" for="hp-rate">Cena za 1 kWh brutto (PLN):</label>
-                            <div class="hp-chips" id="hp-rate-presets">
-                                <button type="button" class="chip-btn active" data-rate="1.04" onclick="setHpRate(1.04, this)">G11 (1,04 zł)</button>
-                                <button type="button" class="chip-btn" data-rate="0.83" onclick="setHpRate(0.83, this)">G12 śr. z pompą (0,83 zł)</button>
-                                <button type="button" class="chip-btn" data-rate="0.79" onclick="setHpRate(0.79, this)">G12w śr. z pompą (0,79 zł)</button>
-                                <button type="button" class="chip-btn" data-rate="0.62" onclick="setHpRate(0.62, this)">G12 II strefa (0,62 zł)</button>
-                            </div>
+                         <div class="hp-chips" id="hp-rate-presets">
+                             <button type="button" class="chip-btn active" data-rate="1.04" onclick="setHpRate(1.04, this)">G11 całodobowa (1,04 zł)</button>
+                             <button type="button" class="chip-btn" data-rate="0.83" onclick="setHpRate(0.83, this)">G12 dzień/noc śr. (0,83 zł)</button>
+                             <button type="button" class="chip-btn" data-rate="0.79" onclick="setHpRate(0.79, this)">G12w z weekendem śr. (0,79 zł)</button>
+                             <button type="button" class="chip-btn" data-rate="0.62" onclick="setHpRate(0.62, this)">G12 strefa nocna (0,62 zł)</button>
+                             <button type="button" class="chip-btn" data-custom="true" onclick="selectHpCustomRate(this)">Stawka własna</button>
+                         </div>
+                         <div id="hp-rate-custom-wrap" style="display: none; margin-top: 8px;">
+                             <input type="number" id="hp-rate" class="form-input" value="1.04" min="0" step="0.01" inputmode="decimal" placeholder="Wpisz własną stawkę (np. 0,95)" oninput="handleHpRateInput()">
+                         </div>
+                     </div>
                             <input type="number" id="hp-rate" class="form-input" value="1.04" min="0" step="0.01" inputmode="decimal" oninput="handleHpRateInput()">
                         </div>
                     </div>
@@ -1720,9 +1725,12 @@
                             </a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
+              </div>
+             <div class="legal-disclaimer">
+                 <strong>Informacja:</strong> Wyliczenia mają charakter wyłącznie orientacyjny i szacunkowy. Rzeczywiste zużycie energii elektrycznej oraz koszty pracy pompy ciepła mogą się różnić w zależności od konkretnego modelu urządzenia (charakterystyki sprężarki i inwertera), jakości izolacji budynku, ustawionej temperatury wewnętrznej i krzywej grzewczej, wilgotności powietrza, cykli odszraniania, temperatury gruntu w danym sezonie oraz aktualnej taryfy i opłat stałych sprzedawcy energii.
+             </div>
+         </div>
+     </section>
 
         <!-- 3. SEKCJA 2: WIĘKSZY KAFELEK - ŁADOWANIE AUTA ELEKTRYCZNEGO (EV) -->
         <section class="ev-banner-card" id="sec-ev">
@@ -2948,25 +2956,34 @@
             syncHpTempChips(tempC);
             calculateHeatPump();
         }
-        
         function setHpRate(rate, btnEl) {
-            const input = document.getElementById('hp-rate');
-            if (!input) return;
-            input.value = rate.toFixed(2);
-            if (btnEl) {
-                document.querySelectorAll('#hp-rate-presets .chip-btn').forEach(b => b.classList.remove('active'));
-                btnEl.classList.add('active');
-            } else {
-                syncHpRateChips(rate);
-            }
-            calculateHeatPump();
-        }
-        
-        function handleHpRateInput() {
-            const rate = parseFloat(document.getElementById('hp-rate').value);
-            syncHpRateChips(rate);
-            calculateHeatPump();
-        }
+         const input = document.getElementById('hp-rate');
+         const customWrap = document.getElementById('hp-rate-custom-wrap');
+         if (!input) return;
+         input.value = rate.toFixed(2);
+         if (customWrap) customWrap.style.display = 'none';
+         if (btnEl) {
+             document.querySelectorAll('#hp-rate-presets .chip-btn').forEach(b => b.classList.remove('active'));
+             btnEl.classList.add('active');
+         } else {
+             syncHpRateChips(rate);
+         }
+         calculateHeatPump();
+     }
+
+     function selectHpCustomRate(btnEl) {
+         const customWrap = document.getElementById('hp-rate-custom-wrap');
+         const input = document.getElementById('hp-rate');
+         document.querySelectorAll('#hp-rate-presets .chip-btn').forEach(b => b.classList.remove('active'));
+         if (btnEl) btnEl.classList.add('active');
+         if (customWrap) customWrap.style.display = 'block';
+         if (input) input.focus();
+         calculateHeatPump();
+     }
+
+     function handleHpRateInput() {
+         calculateHeatPump();
+     }
         
        function getHpFlowTemp(tempC, heatingType, bufferType = 'none') {
             const clampedT = Math.max(-25, Math.min(16, tempC));
@@ -3192,14 +3209,33 @@
                     statusBadge.textContent = `Tryb grzewczy: tylko CO (zasilanie ${flowInfo})`;
                 }
             }
-        }
+       }
 
-        // Start aplikacji
-            renderApplianceTiles();
-            calculateEV();
-            calculateMain();
-            calculateBill();
-            switchTariff('G11', document.querySelector('.tariff-tab'));
+     function applyHpToMainCalculator() {
+         const avgWatts = Math.round((lastHpCalculation.dailyElKwh * 1000) / 24);
+         const rate = Number.isFinite(lastHpCalculation.rate) ? lastHpCalculation.rate : 1.04;
+         const tempVal = document.getElementById('hp-temp-val').textContent;
+
+         clearSelectedApplianceUI();
+         document.getElementById('input-power').value = avgWatts;
+         document.getElementById('input-hours').value = 24;
+         document.getElementById('input-price').value = rate.toFixed(2);
+         document.getElementById('hours-hint').classList.remove('visible');
+         document.querySelectorAll('#quick-operator-chips .chip-btn').forEach(b => b.classList.remove('active'));
+
+         calculateMain();
+         document.getElementById('active-device-badge').textContent = `Pompa ciepła (śr. dobowa przy ${tempVal}, ${hpFormatNumber(lastHpCalculation.dailyElKwh, 1)} kWh/d)`;
+         document.getElementById('sec-calculator').scrollIntoView({ behavior: 'smooth', block: 'center' });
+         showToast(`Przeniesiono pompę ciepła do kalkulatora (${avgWatts} W, 24h/d, ${hpFormatPLN(rate, 2)}/kWh)`);
+     }
+
+     // Start aplikacji
+         renderApplianceTiles();
+         calculateEV();
+         calculateMain();
+         calculateBill();
+         switchTariff('G11', document.querySelector('.tariff-tab'));
+         calculateHeatPump();
         
     </script>
      <script>
